@@ -1,0 +1,10 @@
+import json
+from pathlib import Path
+import pandas as pd
+
+
+DATA_DIR = Path("Spotify_data")
+
+#print(DATA_DIR.exists())
+
+AUDIO_FILES = [DATA_DIR/ ""]
