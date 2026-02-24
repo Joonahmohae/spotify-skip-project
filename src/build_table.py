@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 import pandas as pd
 
-DATA_DIR = Path("Spotify_data")
+DATA_DIR = Path("data/raw/Spotify_data")
 
 AUDIO_FILES = [DATA_DIR/ "Streaming_History_Audio_2019-2025_0.json", 
                DATA_DIR/ "Streaming_History_Audio_2025_1.json", 
