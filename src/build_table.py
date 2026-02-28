@@ -1,33 +1,25 @@
-import json
-from pathlib import Path
-import pandas as pd
+from src.config import AUDIO_FILES, BASE_COLUMNS
+from src.io import load_many_json
+from src.io import to_parquet
+from src.clean import build_base_table
 
-DATA_DIR = Path("data/raw/Spotify_data")
 
-AUDIO_FILES = [DATA_DIR/ "Streaming_History_Audio_2019-2025_0.json", 
-               DATA_DIR/ "Streaming_History_Audio_2025_1.json", 
-               DATA_DIR/ "Streaming_History_Audio_2025-2026_2.json"]
+def main() -> None:
+    raw_df = load_many_json(AUDIO_FILES)
+    filtered_df = build_base_table(raw_df, BASE_COLUMNS)
 
-def load_one_json(path: Path) -> pd.DataFrame:
-    with open(path, "r", encoding = "utf-8") as f:
-        data = json.load(f)
-    df = pd.DataFrame(data)
-    return df
+    # cleaned_events_df (parquet) = df with ts reflecting timezone, ms converted to seconds or minutes to align with the sessioning (Seconds or minutes), 
+    # features_table_df (parquet) = also confused
 
-dfs = []
+    #to_parquet(cleaned_events_df, path)
+    #to_parquest(features_table_df, path)
 
-for i in range(len(AUDIO_FILES)):
-    df = load_one_json(AUDIO_FILES[i])
-    dfs.append(df)
+    print(filtered_df.head(10))
+    print(filtered_df.shape)
 
-concat_df = pd.concat(dfs)
 
-# columns we need: ts, ms_played, conn_country, master_metadata_album_artist_name, reason_start, reason_end, shuffle, skipped, offline
-filtered_df = concat_df[["ts", "ms_played", "conn_country", "master_metadata_album_artist_name", "reason_start", "reason_end", "shuffle", "skipped", "offline"]].copy()
-filtered_df["ts"] = pd.to_datetime(filtered_df["ts"], utc=True)
-filtered_df = filtered_df.sort_values("ts")
-
-print(filtered_df.head(10))
+if __name__ == "__main__":
+    main()
 
 
 
